@@ -2,365 +2,793 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Настольные игры</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d1f1a">
+<title>Boardly — настольные игры</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Boardly">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
+/* ============================================================
+   ПАЛИТРА
+============================================================ */
 :root{
-  --bg:#f4f4f4; --panel:#fff; --panel-2:#ececec; --text:#1a1a1a;
-  --text-dim:#666; --accent:#4caf50; --accent-dark:#388e3c;
-  --danger:#e53935; --gold:#ffd700;
-  --cell-light:#f0d9b5; --cell-dark:#b58863; --board-border:#333;
+  --bg-1:#f4ecd8;
+  --bg-2:#e8dcc0;
+  --bg-grad:
+    radial-gradient(ellipse at top, #faf3e0 0%, transparent 55%),
+    linear-gradient(180deg, #f4ecd8 0%, #dcccb0 100%);
+  --panel:#fdf8ec;
+  --panel-2:#ede3cc;
+  --panel-3:#dfd0b0;
+  --panel-glow: 0 1px 0 rgba(255,255,255,.85) inset, 0 3px 10px rgba(60,40,20,.12);
+  --text:#1a1f1c;
+  --text-2:#4a5348;
+  --text-dim:#8a8276;
+  --accent:#8b2332;
+  --accent-2:#6d1824;
+  --accent-3:#b8894a;
+  --accent-grad: linear-gradient(135deg, #a3303f 0%, #8b2332 50%, #6d1824 100%);
+  --accent-glow: 0 4px 14px rgba(139,35,50,.35);
+  --brass: #b8894a;
+  --brass-grad: linear-gradient(135deg, #d9ad68 0%, #b8894a 50%, #8a6130 100%);
+  --danger:#8b2332;
+  --success:#3f7a4a;
+  --gold:#c9a961;
+  --cell-light:#e8d3a8;
+  --cell-dark:#6b4226;
+  --board-frame-1:#2a1810;
+  --board-frame-2:#4a2d18;
+  --board-shadow: 0 12px 30px rgba(30,20,10,.35);
+  --ease: cubic-bezier(.22,.85,.35,1);
+  --ease-bounce: cubic-bezier(.34,1.56,.64,1);
 }
 body.theme-dark{
-  --bg:#121212; --panel:#1e1e1e; --panel-2:#2a2a2a; --text:#f0f0f0;
-  --text-dim:#999; --accent:#4caf50; --accent-dark:#2e7d32;
-  --danger:#ef5350; --gold:#ffd700;
-  --cell-light:#6d6d6d; --cell-dark:#3a3a3a; --board-border:#000;
+  --bg-1:#0d1f1a;
+  --bg-2:#08140f;
+  --bg-grad:
+    radial-gradient(ellipse at top, #1a2e26 0%, transparent 60%),
+    linear-gradient(180deg, #0d1f1a 0%, #05100c 100%);
+  --panel:#14261f;
+  --panel-2:#1c3229;
+  --panel-3:#254034;
+  --panel-glow: 0 1px 0 rgba(255,255,255,.04) inset, 0 3px 12px rgba(0,0,0,.5);
+  --text:#f0e8d4;
+  --text-2:#b8b09a;
+  --text-dim:#6d6a5e;
+  --accent:#c9414d;
+  --accent-2:#a32a36;
+  --accent-3:#d9ad68;
+  --accent-grad: linear-gradient(135deg, #d95562 0%, #c9414d 50%, #a32a36 100%);
+  --accent-glow: 0 4px 18px rgba(201,65,77,.4);
+  --brass: #d9ad68;
+  --brass-grad: linear-gradient(135deg, #ebc47a 0%, #d9ad68 50%, #a3773a 100%);
+  --cell-light:#8c6a4a;
+  --cell-dark:#3d2618;
+  --board-frame-1:#0a0603;
+  --board-frame-2:#1c1009;
+  --board-shadow: 0 12px 30px rgba(0,0,0,.7);
 }
+
+/* СКИНЫ МЕНЮ */
+body.menu-marble{
+  --bg-1:#f0f0f4;
+  --bg-grad:
+    radial-gradient(ellipse at top left, #ffffff 0%, transparent 50%),
+    linear-gradient(160deg, #f5f5f8 0%, #d8d8e0 100%);
+  --panel:#ffffff; --panel-2:#f0f0f5;
+  --panel-glow: 0 1px 0 #fff inset, 0 4px 12px rgba(40,40,60,.08);
+  --text:#1c1c22; --text-2:#555560; --text-dim:#8888a0;
+  --accent:#4a5568;
+  --accent-grad: linear-gradient(135deg, #6a7280 0%, #4a5568 50%, #2d3540 100%);
+  --accent-glow: 0 4px 14px rgba(74,85,104,.25);
+  --brass:#8892a6;
+  --cell-light:#e0e0e8; --cell-dark:#5a5a6a;
+}
+body.menu-marble .menu-btn{border-radius:2px;border:1px solid rgba(74,85,104,.15)}
+
+body.menu-night{
+  --bg-1:#050814;
+  --bg-grad:
+    radial-gradient(ellipse at top, #1a2340 0%, transparent 60%),
+    linear-gradient(180deg, #050814 0%, #01030a 100%);
+  --panel:#0f1628; --panel-2:#1a2340;
+  --panel-glow: 0 1px 0 rgba(255,255,255,.05) inset, 0 4px 14px rgba(0,0,0,.6);
+  --text:#e8ecf5; --text-2:#9099b0; --text-dim:#4a5568;
+  --accent:#7c8cff;
+  --accent-grad: linear-gradient(135deg, #9aa8ff 0%, #7c8cff 50%, #5a6add 100%);
+  --accent-glow: 0 4px 16px rgba(124,140,255,.5);
+  --brass:#7c8cff;
+  --cell-light:#3a4360; --cell-dark:#181f33;
+}
+
+body.menu-sakura{
+  --bg-1:#fff2f4;
+  --bg-grad:
+    radial-gradient(ellipse at top right, #ffe8ec 0%, transparent 60%),
+    linear-gradient(180deg, #fff2f4 0%, #ffd0da 100%);
+  --panel:#ffffff; --panel-2:#ffe8ec;
+  --panel-glow: 0 1px 0 #fff inset, 0 4px 12px rgba(200,100,120,.12);
+  --text:#2a1c20; --text-2:#6a4a52; --text-dim:#a68a92;
+  --accent:#d94a6a;
+  --accent-grad: linear-gradient(135deg, #e86584 0%, #d94a6a 50%, #a82e4a 100%);
+  --accent-glow: 0 4px 16px rgba(217,74,106,.35);
+  --brass:#e894a8;
+  --cell-light:#ffe0e6; --cell-dark:#a85a6a;
+}
+
+body.menu-forest{
+  --bg-1:#0d1a12;
+  --bg-grad:
+    radial-gradient(ellipse at top, #1a3322 0%, transparent 60%),
+    linear-gradient(180deg, #0d1a12 0%, #050a08 100%);
+  --panel:#15261a; --panel-2:#1f3626;
+  --panel-glow: 0 1px 0 rgba(180,220,180,.06) inset, 0 4px 14px rgba(0,0,0,.5);
+  --text:#d8e8d0; --text-2:#8a9a80; --text-dim:#4a5a48;
+  --accent:#7ab648;
+  --accent-grad: linear-gradient(135deg, #a0d068 0%, #7ab648 50%, #4a8020 100%);
+  --accent-glow: 0 4px 16px rgba(122,182,72,.4);
+  --brass:#c9a961;
+  --cell-light:#4a6a3a; --cell-dark:#1a2a18;
+}
+
+body.menu-retro{
+  --bg-1:#1a1208;
+  --bg-grad:
+    radial-gradient(ellipse at top, #33220f 0%, transparent 60%),
+    linear-gradient(180deg, #1a1208 0%, #0a0603 100%);
+  --panel:#2a1e10; --panel-2:#3a2a18;
+  --panel-glow: 0 1px 0 rgba(255,200,100,.08) inset, 0 4px 14px rgba(0,0,0,.6);
+  --text:#f0d8a8; --text-2:#b89868; --text-dim:#6a5038;
+  --accent:#e8a830;
+  --accent-grad: linear-gradient(135deg, #ffc860 0%, #e8a830 50%, #b87820 100%);
+  --accent-glow: 0 4px 16px rgba(232,168,48,.5);
+  --brass:#e8a830;
+  --cell-light:#8a5a20; --cell-dark:#3a2a10;
+}
+
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;height:100%;font-family:-apple-system,Roboto,Arial,sans-serif;
-  background:var(--bg);color:var(--text);overflow:hidden;user-select:none}
+html,body{
+  margin:0;padding:0;height:100%;
+  font-family:'Manrope',-apple-system,Roboto,sans-serif;
+  color:var(--text);
+  background:var(--bg-1);
+  background-image:var(--bg-grad);
+  background-attachment:fixed;
+  overflow:hidden;user-select:none;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overscroll-behavior:none;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(0,0,0,.03), transparent),
+    radial-gradient(1px 1px at 70% 60%, rgba(0,0,0,.02), transparent);
+  background-size:180px 180px, 240px 240px;
+  opacity:.5;
+}
 
-.screen{position:absolute;inset:0;display:none;flex-direction:column;
-  align-items:center;padding:20px;overflow-y:auto}
-.screen.active{display:flex}
+/* LOW PERF */
+body.low-perf *, body.low-perf *::before, body.low-perf *::after{
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition-duration: .12s !important;
+}
+body.low-perf .piece, body.low-perf .chess-piece { filter: none !important; }
 
-.logo{font-size:38px;font-weight:800;letter-spacing:2px;margin:24px 0 6px;
-  color:var(--accent);text-align:center}
-.logo-sub{font-size:14px;color:var(--text-dim);margin-bottom:30px;text-align:center}
+.screen{
+  position:absolute;inset:0;display:none;
+  flex-direction:column;align-items:center;
+  padding:24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+  overflow-y:auto;z-index:1;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.screen.active{display:flex;animation:screenIn .22s var(--ease-bounce)}
+@keyframes screenIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-.elo-badge{background:var(--panel);padding:8px 16px;border-radius:20px;
-  font-size:14px;font-weight:700;margin-bottom:16px;
-  box-shadow:0 2px 6px rgba(0,0,0,.15)}
-.elo-badge span{color:var(--accent)}
+@media (hover: hover){
+  .menu-btn:hover:not(.primary){ border-color: var(--brass); }
+  .game-actions button:hover:not(:disabled){ transform: translateY(-1px); }
+}
 
-.menu{width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px}
-.menu-btn{padding:16px;font-size:16px;font-weight:600;border:none;border-radius:14px;
+.logo{
+  font-family:'Playfair Display',serif;
+  font-size:52px;font-weight:900;letter-spacing:3px;line-height:1;
+  margin:34px 0 8px;text-align:center;
+  color:var(--accent);
+  text-shadow:0 1px 0 rgba(255,255,255,.4), 0 2px 4px rgba(139,35,50,.2);
+  position:relative;
+}
+body.theme-dark .logo{text-shadow:0 2px 8px rgba(201,65,77,.5)}
+.logo-sub{
+  font-size:11px;font-weight:600;letter-spacing:6px;text-transform:uppercase;
+  color:var(--text-dim);margin:26px 0 38px;text-align:center;
+}
+.elo-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--panel);padding:10px 22px;border-radius:6px;
+  font-size:14px;font-weight:600;color:var(--text-2);
+  box-shadow:var(--panel-glow);margin-bottom:6px;
+  border:1px solid rgba(184,137,74,.3);
+  font-family:'Playfair Display',serif;
+}
+.elo-badge::before{content:"♛";color:var(--brass);font-size:15px}
+.elo-badge span{color:var(--accent);font-weight:700;font-size:17px;letter-spacing:.5px}
+
+.title-badge{
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--brass);margin-top:6px;
+  padding:3px 12px;border:1px solid var(--brass);border-radius:3px;
+  background:rgba(184,137,74,.08);
+}
+
+.menu{width:100%;max-width:380px;display:flex;flex-direction:column;gap:9px}
+.resume-btn{
+  background:linear-gradient(135deg, #3f7a4a 0%, #2e5a36 100%);
+  color:#f4ecd8;padding:16px 20px;
+  border:1px solid rgba(184,137,74,.4);border-radius:6px;
+  font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.5px;
+  cursor:pointer;box-shadow:0 4px 14px rgba(63,122,74,.35);
+  transition:transform .12s var(--ease-bounce);
+  display:flex;align-items:center;gap:14px;text-align:left;margin-bottom:4px;
+}
+.resume-btn:active{transform:scale(.98)}
+.resume-btn .icon{font-size:24px;line-height:1}
+.resume-btn .label{flex:1;display:flex;flex-direction:column;gap:2px}
+.resume-btn .label .main{font-size:15px;font-weight:800;letter-spacing:.5px}
+.resume-btn .label .sub{font-size:11px;font-weight:500;opacity:.85;letter-spacing:1px}
+
+.menu-btn{
+  padding:16px 20px;font-family:inherit;font-size:15px;font-weight:600;letter-spacing:.4px;
+  border:1px solid rgba(184,137,74,.25);border-radius:6px;
   background:var(--panel);color:var(--text);cursor:pointer;
-  box-shadow:0 2px 6px rgba(0,0,0,.15);transition:transform .08s;
-  display:flex;align-items:center;justify-content:center;gap:10px}
-.menu-btn:active{transform:scale(.97)}
-.menu-btn.primary{background:var(--accent);color:#fff}
-.menu-btn.primary:active{background:var(--accent-dark)}
-.menu-btn.small{padding:12px;font-size:15px}
+  box-shadow:var(--panel-glow);
+  transition:transform .12s var(--ease-bounce), box-shadow .18s, border-color .18s;
+  display:flex;align-items:center;gap:14px;text-align:left;
+}
+.menu-btn:active{transform:scale(.98);border-color:rgba(184,137,74,.5)}
+.menu-btn .icon{font-size:24px;line-height:1}
+.menu-btn .label{flex:1;display:flex;flex-direction:column;gap:2px}
+.menu-btn .label .main{font-size:15px;font-weight:700;letter-spacing:.3px}
+.menu-btn .label .sub{font-size:11px;font-weight:500;color:var(--text-dim);letter-spacing:.5px}
+.menu-btn .chev{color:var(--brass);font-size:20px;transition:transform .15s}
+.menu-btn:active .chev{transform:translateX(3px)}
+.menu-btn.primary{
+  background:var(--accent-grad);color:#f4ecd8;
+  box-shadow:var(--accent-glow);border:1px solid rgba(184,137,74,.35);
+}
+.menu-btn.primary .label .sub{color:rgba(244,236,216,.75)}
+.menu-btn.primary .chev{color:rgba(217,173,104,.9)}
 
-.topbar{width:100%;max-width:520px;display:flex;align-items:center;
-  justify-content:space-between;margin-bottom:16px;gap:8px}
-.topbar h2{margin:0;font-size:19px;flex:1;text-align:center}
-.back-btn{background:var(--panel);color:var(--text);border:none;border-radius:10px;
-  padding:9px 14px;font-size:14px;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.15);
-  white-space:nowrap}
+.topbar{
+  width:100%;max-width:520px;display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:18px;gap:10px;flex-shrink:0;
+}
+.topbar h2{
+  margin:0;font-family:'Playfair Display',serif;font-size:21px;font-weight:700;
+  flex:1;text-align:center;letter-spacing:1px;color:var(--text);
+}
+.back-btn{
+  background:var(--panel);color:var(--text);
+  border:1px solid rgba(184,137,74,.25);border-radius:6px;padding:9px 14px;
+  font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.5px;
+  cursor:pointer;box-shadow:var(--panel-glow);
+  transition:transform .12s var(--ease-bounce);
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.back-btn:active{transform:scale(.95)}
 
-#status{margin-bottom:10px;font-size:16px;min-height:22px;font-weight:600;
-  text-align:center;padding:0 10px}
+#status{
+  margin-bottom:12px;font-size:14px;font-weight:600;min-height:20px;text-align:center;
+  padding:8px 20px;background:var(--panel);border-radius:6px;
+  box-shadow:var(--panel-glow);letter-spacing:.5px;color:var(--text-2);
+  flex-shrink:0;border:1px solid rgba(184,137,74,.2);
+  font-family:'Playfair Display',serif;
+}
+#status.turn-check{color:var(--accent);font-weight:800;animation:pulse-text 1.5s infinite}
+@keyframes pulse-text{0%,100%{opacity:1}50%{opacity:.6}}
 
-/* Доска */
+#timer-bar{
+  width:min(92vw,480px);height:6px;background:var(--panel-2);border-radius:3px;
+  margin-top:10px;overflow:hidden;display:none;border:1px solid rgba(184,137,74,.2);
+}
+#timer-bar.active{display:block}
+#timer-bar > div{
+  height:100%;background:linear-gradient(90deg, var(--success) 0%, var(--accent) 100%);
+  border-radius:3px;transition:width .3s linear, background .3s;
+}
+#timer-bar.warning > div{background:linear-gradient(90deg, #d94a6a 0%, #8b2332 100%)}
+
 #board{
-  display:grid;
-  grid-template-columns:repeat(8,1fr);
-  grid-template-rows:repeat(8,1fr);
-  width:min(92vw,480px);
-  height:min(92vw,480px);
-  border:6px solid var(--board-border);
-  border-radius:8px;
-  overflow:hidden;
-  box-shadow:0 8px 20px rgba(0,0,0,.3);
-  background:var(--cell-dark);
-  line-height:0;
+  display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);
+  width:min(92vw,480px);height:min(92vw,480px);
+  border-radius:4px;overflow:hidden;background:var(--cell-dark);line-height:0;
   position:relative;
+  box-shadow:var(--board-shadow), 0 0 0 5px var(--board-frame-2),
+    0 0 0 7px var(--board-frame-1), 0 0 0 8px rgba(184,137,74,.4);
 }
+body.low-perf #board{box-shadow:var(--board-shadow),0 0 0 5px var(--board-frame-2)}
 .cell{
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-width:0;
-  min-height:0;
-  overflow:hidden;
+  position:relative;display:flex;align-items:center;justify-content:center;
+  min-width:0;min-height:0;overflow:hidden;
 }
-.light{background:var(--cell-light)}
-.dark{background:var(--cell-dark)}
+.light{
+  background:var(--cell-light);
+  background-image:linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 40%);
+}
+.dark{
+  background:var(--cell-dark);
+  background-image:linear-gradient(135deg, rgba(0,0,0,.1) 0%, transparent 40%);
+}
 
-/* ============ ШАШКИ ============ */
-.piece{position:relative;width:80%;height:80%;border-radius:50%;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:transform .12s}
-.piece.white{background:
-  radial-gradient(circle at 50% 50%,rgba(255,255,255,.4) 0%,transparent 55%),
-  radial-gradient(circle at 32% 28%,#fff 0%,#e8e8e8 45%,#b8b8b8 100%);
-  box-shadow:inset 0 -3px 6px rgba(0,0,0,.35),inset 0 3px 6px rgba(255,255,255,.9),
-  0 3px 6px rgba(0,0,0,.45);border:2px solid #8a8a8a}
-.piece.white::before{content:"";position:absolute;inset:18%;border-radius:50%;
-  border:1.5px solid rgba(0,0,0,.25);box-shadow:inset 0 0 4px rgba(0,0,0,.15)}
-.piece.white::after{content:"";position:absolute;inset:30%;border-radius:50%;
-  border:1px solid rgba(0,0,0,.2);
-  background:radial-gradient(circle,#fdfdfd 0%,#dcdcdc 100%)}
-.piece.black{background:
-  radial-gradient(circle at 50% 50%,rgba(255,255,255,.15) 0%,transparent 55%),
-  radial-gradient(circle at 32% 28%,#5a5a5a 0%,#2b2b2b 45%,#000 100%);
-  box-shadow:inset 0 -3px 6px rgba(0,0,0,.7),inset 0 3px 5px rgba(255,255,255,.25),
-  0 3px 6px rgba(0,0,0,.55);border:2px solid #000}
-.piece.black::before{content:"";position:absolute;inset:18%;border-radius:50%;
-  border:1.5px solid rgba(255,255,255,.15);box-shadow:inset 0 0 4px rgba(0,0,0,.5)}
-.piece.black::after{content:"";position:absolute;inset:30%;border-radius:50%;
-  border:1px solid rgba(255,255,255,.12);
-  background:radial-gradient(circle,#2a2a2a 0%,#0a0a0a 100%)}
-.piece.king::after{content:"♛";inset:0;border:none;background:transparent;
-  display:flex;align-items:center;justify-content:center;font-size:1.5em;
-  color:var(--gold);text-shadow:0 0 3px #000,0 0 6px #a67c00;z-index:2}
-.piece.king{border-color:#c9a227}
+.piece{
+  position:relative;width:76%;height:76%;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:transform .12s var(--ease-bounce);
+}
+.piece:active{transform:scale(.92);filter:brightness(1.1)}
+.piece.white{
+  background:radial-gradient(circle at 38% 30%, #f8f0dc 0%, #e8d5b0 35%, #b89a6c 80%, #8a6a42 100%);
+  box-shadow:inset 0 -3px 5px rgba(80,55,25,.5),inset 0 3px 5px rgba(255,248,224,.9),0 3px 5px rgba(0,0,0,.35);
+}
+.piece.white::before{
+  content:"";position:absolute;inset:18%;border-radius:50%;
+  border:1.5px solid rgba(139,100,50,.5);
+  box-shadow:inset 0 2px 3px rgba(120,80,40,.3),inset 0 -1px 2px rgba(255,240,210,.6);
+}
+.piece.white::after{
+  content:"";position:absolute;inset:32%;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #f5e9cf 0%, #d4b88a 100%);
+  box-shadow:inset 0 1px 2px rgba(100,70,30,.4);
+}
+.piece.black{
+  background:radial-gradient(circle at 38% 30%, #4a3a2c 0%, #2a1e14 40%, #0a0603 100%);
+  box-shadow:inset 0 -3px 5px rgba(0,0,0,.9),inset 0 3px 5px rgba(255,255,255,.08),0 3px 5px rgba(0,0,0,.5);
+}
+.piece.black::before{
+  content:"";position:absolute;inset:18%;border-radius:50%;
+  border:1.5px solid rgba(120,90,60,.35);
+  box-shadow:inset 0 2px 3px rgba(0,0,0,.8),inset 0 -1px 2px rgba(255,220,180,.06);
+}
+.piece.black::after{
+  content:"";position:absolute;inset:32%;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #3a2a1c 0%, #050302 100%);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.9);
+}
+.piece.king::after{
+  content:"♛";inset:0;border:none;background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.55em;color:var(--gold);
+  text-shadow:0 1px 0 #5a3a10, 0 0 6px rgba(201,169,97,.7);
+  z-index:2;font-family:'Playfair Display',serif;
+}
+.piece.king{
+  box-shadow:inset 0 -3px 5px rgba(120,90,50,.5),inset 0 3px 5px rgba(255,255,255,.7),
+    0 0 0 2px var(--brass),0 0 10px rgba(184,137,74,.5);
+}
+.piece.black.king{
+  box-shadow:inset 0 -3px 5px rgba(0,0,0,.9),inset 0 3px 5px rgba(255,255,255,.1),
+    0 0 0 2px var(--brass),0 0 10px rgba(184,137,74,.5);
+}
+body.low-perf .piece.king::after{text-shadow:0 0 2px #000}
 
-/* ============ ШАХМАТЫ ============ */
+body.piece-skin-glass .piece.white{
+  background:linear-gradient(145deg, rgba(255,255,255,.75), rgba(220,240,255,.55));
+  box-shadow:inset 0 2px 10px rgba(255,255,255,.9), 0 3px 12px rgba(100,150,200,.4);
+}
+body.piece-skin-glass .piece.black{
+  background:linear-gradient(145deg, rgba(60,60,80,.85), rgba(20,20,40,.95));
+  box-shadow:inset 0 2px 10px rgba(150,150,200,.4), 0 3px 12px rgba(0,0,0,.5);
+}
+body.piece-skin-neon .piece.white{
+  background:radial-gradient(circle, #fff 0%, #a0e0ff 100%);
+  box-shadow:inset 0 0 8px rgba(255,255,255,.9), 0 0 16px rgba(100,200,255,.9);
+}
+body.piece-skin-neon .piece.black{
+  background:radial-gradient(circle, #2a2040 0%, #0a0518 100%);
+  box-shadow:inset 0 0 8px rgba(255,100,255,.4), 0 0 16px rgba(255,100,255,.8);
+}
+body.piece-skin-metal .piece.white{
+  background:conic-gradient(from 0deg, #e8e8e8, #fff, #c0c0c0, #fff, #e8e8e8);
+  box-shadow:inset 0 -3px 6px rgba(0,0,0,.4), 0 0 0 2px #999, 0 4px 10px rgba(0,0,0,.4);
+}
+body.piece-skin-metal .piece.black{
+  background:conic-gradient(from 0deg, #1a1a1a, #404040, #0a0a0a, #303030, #1a1a1a);
+  box-shadow:inset 0 -3px 6px rgba(0,0,0,.9), 0 0 0 2px #666, 0 4px 10px rgba(0,0,0,.6);
+}
+body.piece-skin-wood-piece .piece.white{
+  background:repeating-linear-gradient(90deg, #d4a574 0 4px, #c8945e 4px 8px);
+  box-shadow:inset 0 -3px 6px rgba(80,40,10,.6), 0 0 0 2px #8a5a2a, 0 4px 10px rgba(0,0,0,.4);
+}
+body.piece-skin-wood-piece .piece.black{
+  background:repeating-linear-gradient(90deg, #3a2418 0 4px, #2a1a10 4px 8px);
+  box-shadow:inset 0 -3px 6px rgba(0,0,0,.9), 0 0 0 2px #1a0f08, 0 4px 10px rgba(0,0,0,.6);
+}
+
 .chess-piece{
-  width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:clamp(20px,6.5vmin,44px);
-  line-height:1;
-  cursor:pointer;
-  transition:transform .1s;
-  filter:drop-shadow(0 2px 2px rgba(0,0,0,.35));
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:clamp(22px,7vmin,46px);line-height:1;cursor:pointer;
+  transition:transform .12s var(--ease-bounce);
   font-family:"Segoe UI Symbol","Apple Symbols","Noto Sans Symbols 2",serif;
-  font-variant-emoji:text;
-  text-rendering:geometricPrecision;
+  font-variant-emoji:text;text-rendering:geometricPrecision;
 }
-.chess-piece.white{
-  color:#fff;
-  text-shadow:0 0 2px #000,0 0 3px #000,
-    0 1px 0 #666,-1px 0 0 #333,1px 0 0 #333,0 -1px 0 #333;
-}
-.chess-piece.black{
-  color:#1a1a1a;
-  text-shadow:0 0 2px rgba(255,255,255,.4);
-}
-.chess-piece:active{transform:scale(.93)}
+.chess-piece:active{transform:scale(.88);filter:brightness(1.15)}
+.chess-piece.white{color:#faf4e4;text-shadow:0 0 1px #5a4a2a, 0 1px 0 #b8a484, 0 2px 3px rgba(0,0,0,.5)}
+.chess-piece.black{color:#1a1408;text-shadow:0 0 1px rgba(200,180,140,.4), 0 1px 2px rgba(0,0,0,.5)}
 
-/* Подсветки */
-.selected{outline:4px solid var(--gold);outline-offset:-5px;border-radius:4px}
-.hint::before{content:"";position:absolute;width:28%;height:28%;
-  border-radius:50%;background:rgba(76,175,80,.85);
-  box-shadow:0 0 8px rgba(76,175,80,.8);z-index:1}
-.hint.capture::before{background:rgba(229,57,53,.85);
-  box-shadow:0 0 8px rgba(229,57,53,.8);width:34%;height:34%}
-.check-highlight{background:rgba(229,57,53,.5)!important;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
-.last-move{background:rgba(255,215,0,.35)!important}
-
-.game-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}
-.game-actions button{padding:11px 18px;font-size:14px;border:none;border-radius:10px;
-  background:var(--panel);color:var(--text);cursor:pointer;font-weight:600;
-  box-shadow:0 2px 5px rgba(0,0,0,.15)}
-.game-actions button.primary{background:var(--accent);color:#fff}
-.game-actions button.danger{background:var(--danger);color:#fff}
-.game-actions button.undo{background:#ff9800;color:#fff}
-.game-actions button.undo:disabled{opacity:.4}
-
-/* ============ СКИНЫ ДОСКИ ============ */
-body.skin-classic{--cell-light:#f0d9b5;--cell-dark:#b58863}
-body.skin-wood{--cell-light:#e6c9a8;--cell-dark:#8b5a2b}
-body.skin-marble{--cell-light:#e8e8e8;--cell-dark:#5a5a6a}
-body.skin-neon{--cell-light:#2a2a3a;--cell-dark:#0d0d18;--board-border:#00e5ff}
-body.skin-neon .light{box-shadow:inset 0 0 8px rgba(0,229,255,.15)}
-body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
-
-/* ============ АНИМАЦИИ ============ */
-@keyframes moveAnim{
-  from{transform:translate(var(--dx),var(--dy)) scale(.9);opacity:.85}
-  to{transform:translate(0,0) scale(1);opacity:1}
+#ttt-board{
+  display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  width:min(80vw,360px);height:min(80vw,360px);
+  border-radius:6px;overflow:hidden;background:var(--cell-dark);
+  gap:5px;padding:5px;
+  box-shadow:var(--board-shadow),0 0 0 5px var(--board-frame-2),0 0 0 7px var(--board-frame-1);
 }
-.piece.animating,.chess-piece.animating{
-  animation:moveAnim .22s ease-out;
+.ttt-cell{
+  background:var(--panel);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;
+  transition:transform .1s var(--ease-bounce), background .15s;
+  font-size:clamp(48px,16vw,80px);font-weight:400;line-height:1;
+  font-family:'Playfair Display',serif;
 }
-@keyframes captureAnim{
-  from{transform:scale(1);opacity:1}
-  60%{transform:scale(1.15);opacity:.7}
-  to{transform:scale(0);opacity:0}
+.ttt-cell:active{transform:scale(.95)}
+.ttt-cell.x{color:var(--accent);text-shadow:0 1px 0 rgba(255,255,255,.3), 0 2px 4px rgba(139,35,50,.4)}
+.ttt-cell.o{color:var(--brass);text-shadow:0 1px 0 rgba(255,255,255,.3), 0 2px 4px rgba(184,137,74,.4)}
+.ttt-cell.win{
+  background:var(--accent-grad);color:#f4ecd8;
+  animation:winPulse .55s var(--ease-bounce);
+  box-shadow:0 0 18px var(--accent-glow);
 }
-.piece.captured,.chess-piece.captured{
-  animation:captureAnim .28s ease-in forwards;
-  pointer-events:none;
-}
+@keyframes winPulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+.ttt-cell .mark-anim{animation:markIn .28s var(--ease-bounce)}
+@keyframes markIn{from{transform:scale(0) rotate(-30deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
 
-/* ============ НАСТРОЙКИ ============ */
-.settings-list{width:100%;max-width:420px;display:flex;flex-direction:column;gap:12px}
-.setting-row{background:var(--panel);border-radius:12px;padding:14px 16px;
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  box-shadow:0 2px 5px rgba(0,0,0,.12)}
+.selected{outline:none;box-shadow:inset 0 0 0 3px var(--gold), inset 0 0 12px rgba(201,169,97,.5)}
+.hint::before{
+  content:"";position:absolute;width:30%;height:30%;border-radius:50%;
+  background:radial-gradient(circle, rgba(63,122,74,.95) 0%, rgba(63,122,74,.3) 70%);
+  z-index:1;animation:hintBounce 1.3s infinite;
+}
+@keyframes hintBounce{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.12);opacity:1}}
+.hint.capture::before{
+  background:radial-gradient(circle, rgba(139,35,50,.95) 0%, rgba(139,35,50,.3) 70%);
+  width:36%;height:36%;
+}
+.check-highlight{background:rgba(139,35,50,.5)!important;animation:checkFlash 1s infinite}
+@keyframes checkFlash{0%,100%{opacity:.75}50%{opacity:1}}
+.last-move{background:rgba(201,169,97,.35)!important;box-shadow:inset 0 0 10px rgba(201,169,97,.4)}
+.hint-best{animation:hintBest 1.2s infinite;box-shadow:inset 0 0 0 3px var(--brass)!important}
+@keyframes hintBest{0%,100%{box-shadow:inset 0 0 0 3px var(--brass)}50%{box-shadow:inset 0 0 0 3px var(--gold), inset 0 0 14px rgba(201,169,97,.6)}}
+.hint-trainer{box-shadow:inset 0 0 0 3px #4ea7ff!important;animation:trainerPulse 1s infinite}
+@keyframes trainerPulse{0%,100%{box-shadow:inset 0 0 0 3px #4ea7ff}50%{box-shadow:inset 0 0 0 3px #8ac4ff, inset 0 0 14px rgba(78,167,255,.6)}}
+
+.game-actions{display:flex;gap:7px;margin-top:16px;flex-wrap:wrap;justify-content:center;flex-shrink:0}
+.game-actions button{
+  padding:11px 15px;min-width:48px;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.5px;
+  border:1px solid rgba(184,137,74,.3);border-radius:6px;
+  background:var(--panel);color:var(--text);cursor:pointer;
+  box-shadow:var(--panel-glow);
+  transition:transform .12s var(--ease-bounce);
+  display:flex;align-items:center;gap:5px;justify-content:center;
+}
+.game-actions button:active{transform:scale(.94)}
+.game-actions button:disabled{opacity:.4;cursor:not-allowed}
+.game-actions button.primary{background:var(--accent-grad);color:#f4ecd8;box-shadow:var(--accent-glow);border:1px solid rgba(184,137,74,.4)}
+.game-actions button.danger{background:linear-gradient(135deg, #8b2332, #5a1018);color:#f4ecd8;border:1px solid rgba(184,137,74,.3)}
+.game-actions button.undo{background:var(--brass-grad);color:#2a1810;border:1px solid rgba(255,255,255,.25);box-shadow:0 4px 12px rgba(184,137,74,.4)}
+.game-actions button.trainer{background:linear-gradient(135deg, #4ea7ff, #2d7dd2);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.game-actions button.trainer.active{background:linear-gradient(135deg, #2d7dd2, #1e5a9e);box-shadow:0 0 16px rgba(78,167,255,.6)}
+
+.eval-bar{
+  width:min(92vw,480px);height:10px;background:#1a1008;border-radius:3px;margin-top:12px;
+  overflow:hidden;position:relative;box-shadow:inset 0 2px 4px rgba(0,0,0,.5),0 0 0 1px rgba(184,137,74,.3);flex-shrink:0;
+}
+.eval-bar .fill{position:absolute;top:0;bottom:0;transition:left .3s, width .3s, background .3s}
+.eval-bar .center-line{position:absolute;top:0;bottom:0;left:50%;width:1px;background:rgba(184,137,74,.6);z-index:2}
+.eval-bar .label{position:absolute;top:-18px;left:0;right:0;font-size:10px;font-weight:600;color:var(--text-dim);text-align:center;letter-spacing:1.5px;text-transform:uppercase}
+
+.settings-list{width:100%;max-width:440px;display:flex;flex-direction:column;gap:10px}
+.setting-row{
+  background:var(--panel);border-radius:6px;padding:15px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  box-shadow:var(--panel-glow);border:1px solid rgba(184,137,74,.2);
+}
 .setting-row.column{flex-direction:column;align-items:stretch}
-.label{font-size:15px;font-weight:500}
-.sub{font-size:12px;color:var(--text-dim);margin-top:2px}
+.label{font-size:14px;font-weight:700;letter-spacing:.4px}
+.sub{font-size:11px;font-weight:500;color:var(--text-dim);margin-top:3px;letter-spacing:.4px}
+.toggle{
+  position:relative;width:50px;height:30px;background:linear-gradient(135deg, #555, #333);
+  border:1px solid rgba(184,137,74,.3);border-radius:15px;cursor:pointer;transition:background .22s;flex-shrink:0;
+}
+.toggle.on{background:var(--accent-grad);border-color:rgba(184,137,74,.5)}
+.toggle::after{
+  content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;
+  border-radius:50%;background:#f4ecd8;
+  transition:transform .25s var(--ease-bounce);box-shadow:0 2px 4px rgba(0,0,0,.3);
+}
+.toggle.on::after{transform:translateX(20px)}
 
-.toggle{position:relative;width:52px;height:30px;background:#bbb;border-radius:15px;
-  cursor:pointer;transition:background .2s;flex-shrink:0}
-.toggle.on{background:var(--accent)}
-.toggle::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;
-  border-radius:50%;background:#fff;transition:transform .2s;
-  box-shadow:0 1px 3px rgba(0,0,0,.3)}
-.toggle.on::after{transform:translateX(22px)}
+.theme-switch{display:flex;gap:3px;background:var(--panel-2);border-radius:6px;padding:3px;flex-wrap:wrap;border:1px solid rgba(184,137,74,.15)}
+.theme-switch button{
+  padding:7px 12px;border:none;border-radius:4px;background:transparent;color:var(--text-2);
+  font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.4px;cursor:pointer;
+  transition:background .15s, color .15s;
+}
+.theme-switch button.active{background:var(--accent-grad);color:#f4ecd8}
 
-.theme-switch,.diff-switch{display:flex;gap:5px;background:var(--panel-2);
-  border-radius:10px;padding:4px;flex-wrap:wrap}
-.theme-switch button,.diff-switch button{padding:7px 12px;border:none;border-radius:7px;
-  background:transparent;color:var(--text);font-size:13px;cursor:pointer;font-weight:600}
-.theme-switch button.active,.diff-switch button.active{background:var(--accent);color:#fff}
+.code-box{
+  background:var(--panel-2);border-radius:6px;padding:14px;
+  font-family:'Courier New',monospace;font-size:12px;font-weight:600;
+  word-break:break-all;text-align:center;margin-top:12px;letter-spacing:1.5px;
+  color:var(--accent);border:1px dashed rgba(184,137,74,.4);
+}
+.code-actions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.code-actions button{
+  flex:1;min-width:110px;padding:10px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.4px;
+  border:1px solid rgba(184,137,74,.3);border-radius:5px;
+  background:var(--accent-grad);color:#f4ecd8;cursor:pointer;
+  transition:transform .12s var(--ease-bounce);
+}
+.code-actions button:active{transform:scale(.96)}
+.code-actions button.secondary{background:var(--panel-2);color:var(--text);box-shadow:none}
+.code-actions button.danger{background:linear-gradient(135deg, #8b2332, #5a1018);color:#f4ecd8}
 
-.code-box{background:var(--panel-2);border-radius:10px;padding:12px;
-  font-family:monospace;font-size:13px;word-break:break-all;text-align:center;
-  margin-top:10px;letter-spacing:1px}
-.code-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.code-actions button{flex:1;min-width:110px;padding:10px;font-size:13px;border:none;
-  border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;font-weight:600}
-.code-actions button.secondary{background:var(--panel-2);color:var(--text)}
-.code-actions button.danger{background:var(--danger);color:#fff}
+.profile-header{
+  width:100%;max-width:440px;background:var(--panel);border-radius:8px;padding:20px;
+  box-shadow:var(--panel-glow);border:1px solid rgba(184,137,74,.3);
+  text-align:center;margin-bottom:14px;
+}
+.profile-header .name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;letter-spacing:.5px;margin-bottom:4px}
+.profile-header .title-big{
+  display:inline-block;font-size:12px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--brass);
+  padding:5px 16px;border:2px solid var(--brass);border-radius:4px;
+  background:rgba(184,137,74,.08);margin:8px 0;
+}
+.profile-header .elo-big{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--accent);margin:8px 0 4px}
+.profile-header .elo-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);font-weight:700}
+.stat-grid{width:100%;max-width:440px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.stat-card{background:var(--panel);border-radius:6px;padding:14px;box-shadow:var(--panel-glow);border:1px solid rgba(184,137,74,.2);text-align:center}
+.stat-card .num{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--accent);letter-spacing:.5px}
+.stat-card .lbl{font-size:11px;color:var(--text-dim);margin-top:4px;letter-spacing:1px;text-transform:uppercase;font-weight:600}
 
-/* ============ РЕЙТИНГ ============ */
-.tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--panel-2);
-  border-radius:12px;padding:4px;width:100%;max-width:420px}
-.tabs button{flex:1;padding:10px;border:none;border-radius:9px;background:transparent;
-  color:var(--text);font-size:14px;cursor:pointer;font-weight:600}
-.tabs button.active{background:var(--accent);color:#fff}
+#elo-graph{width:100%;max-width:440px;background:var(--panel);border-radius:8px;padding:16px;box-shadow:var(--panel-glow);border:1px solid rgba(184,137,74,.2);margin-bottom:14px}
+#elo-graph .title{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px}
+#elo-canvas{width:100%;height:140px;display:block}
 
-.rating-list{width:100%;max-width:420px;display:flex;flex-direction:column;gap:8px}
-.rating-row{background:var(--panel);border-radius:12px;padding:12px 14px;
-  display:flex;justify-content:space-between;align-items:center;
-  box-shadow:0 2px 5px rgba(0,0,0,.12);gap:8px}
-.rating-row .rank{font-weight:700;color:var(--accent);width:34px;flex-shrink:0}
-.rating-row .name{flex:1;text-align:left;font-weight:500;font-size:14px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rating-row .score{font-weight:700;color:var(--accent)}
-.rating-row.me{background:var(--accent);color:#fff}
-.rating-row.me .rank,.rating-row.me .score{color:#fff}
-.rating-row.locked{opacity:.55}
-.rating-row .lock{font-size:12px;color:var(--text-dim)}
-.rating-row.defeated{background:linear-gradient(90deg,var(--panel) 0%,
-  rgba(76,175,80,.15) 100%)}
+.calendar-wrap{width:100%;max-width:440px;background:var(--panel);border-radius:8px;padding:16px;box-shadow:var(--panel-glow);border:1px solid rgba(184,137,74,.2);margin-bottom:14px}
+.calendar-wrap .title{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px}
+.calendar-grid{display:grid;grid-template-columns:repeat(15, 1fr);gap:3px}
+.cal-cell{aspect-ratio:1/1;border-radius:2px;background:var(--panel-2);border:1px solid rgba(184,137,74,.1)}
+.cal-cell.l1{background:rgba(63,122,74,.35)}
+.cal-cell.l2{background:rgba(63,122,74,.55)}
+.cal-cell.l3{background:rgba(63,122,74,.75)}
+.cal-cell.l4{background:rgba(63,122,74,1)}
 
-.progress-bar{width:100%;max-width:420px;height:10px;background:var(--panel-2);
-  border-radius:5px;margin:10px 0 16px;overflow:hidden}
-.progress-bar > div{height:100%;background:var(--accent);border-radius:5px;
-  transition:width .4s}
+.best-list{width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px}
+.best-row{background:var(--panel);border-radius:6px;padding:13px 16px;box-shadow:var(--panel-glow);border:1px solid rgba(184,137,74,.2)}
+.best-row .head{display:flex;justify-content:space-between;font-weight:700;font-size:13px;margin-bottom:4px}
+.best-row .meta{font-size:11px;color:var(--text-dim);display:flex;gap:12px;flex-wrap:wrap}
 
-.empty-note{color:var(--text-dim);font-size:14px;text-align:center;margin-top:24px}
+.challenge-list{width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px}
+.challenge-card{background:var(--panel);border-radius:6px;padding:14px 16px;box-shadow:var(--panel-glow);border:1px solid rgba(184,137,74,.2);display:flex;gap:12px;align-items:center}
+.challenge-card.done{background:linear-gradient(90deg, var(--panel) 0%, rgba(63,122,74,.15) 100%);border-color:rgba(63,122,74,.4)}
+.challenge-card .ico{font-size:26px;flex-shrink:0}
+.challenge-card .info{flex:1}
+.challenge-card .info .ttl{font-weight:700;font-size:13px}
+.challenge-card .info .dsc{font-size:11px;color:var(--text-dim);margin-top:3px}
+.challenge-card .status{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--brass);text-transform:uppercase}
+.challenge-card.done .status{color:var(--success)}
 
-/* ============ ДОСТИЖЕНИЯ ============ */
-.achievement-list{width:100%;max-width:420px;display:flex;
-  flex-direction:column;gap:10px}
-.ach-row{background:var(--panel);border-radius:12px;padding:12px 14px;
-  display:flex;gap:12px;align-items:center;box-shadow:0 2px 5px rgba(0,0,0,.12)}
+.daily-card{width:100%;max-width:380px;background:var(--panel);border-radius:6px;padding:14px 18px;border:1px solid rgba(184,137,74,.3);box-shadow:var(--panel-glow);margin-bottom:14px}
+.daily-card .ttl{font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+.daily-card .task{font-size:13px;font-weight:600;letter-spacing:.3px}
+.daily-card .prog{font-size:11px;margin-top:5px;font-weight:700;letter-spacing:.5px}
+
+.trainer-toast{
+  position:fixed;bottom:100px;left:50%;
+  transform:translateX(-50%) translateY(60px);
+  background:linear-gradient(135deg, #4ea7ff, #2d7dd2);color:#fff;
+  padding:12px 20px;border-radius:6px;
+  font-size:13px;font-weight:600;letter-spacing:.3px;
+  box-shadow:0 8px 24px rgba(78,167,255,.5);
+  z-index:250;opacity:0;
+  transition:transform .3s var(--ease-bounce), opacity .3s;
+  pointer-events:none;max-width:90vw;text-align:center;
+}
+.trainer-toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+.tabs{display:flex;gap:3px;margin-bottom:16px;background:var(--panel-2);border-radius:6px;padding:3px;width:100%;max-width:440px;flex-shrink:0;border:1px solid rgba(184,137,74,.15)}
+.tabs button{flex:1;padding:10px;font-family:inherit;border:none;border-radius:4px;background:transparent;color:var(--text-2);font-size:12px;font-weight:700;letter-spacing:.4px;cursor:pointer;transition:background .15s, color .15s}
+.tabs button.active{background:var(--accent-grad);color:#f4ecd8}
+.rating-list{width:100%;max-width:440px;display:flex;flex-direction:column;gap:6px}
+.rating-row{background:var(--panel);border-radius:6px;padding:13px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:var(--panel-glow);border:1px solid rgba(184,137,74,.15)}
+.rating-row .rank{font-family:'Playfair Display',serif;font-weight:700;color:var(--brass);width:32px;flex-shrink:0;font-size:15px;text-align:center}
+.rating-row .name{flex:1;text-align:left;font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rating-row .score{font-weight:700;color:var(--accent);font-size:14px;letter-spacing:.3px;font-family:'Playfair Display',serif}
+.rating-row.me{background:var(--accent-grad);color:#f4ecd8;border:1px solid rgba(184,137,74,.4)}
+.rating-row.me .rank,.rating-row.me .score{color:var(--brass)}
+.rating-row.me .name{font-weight:700}
+.rating-row.locked{opacity:.5}
+.rating-row.defeated{background:linear-gradient(90deg, var(--panel) 0%, rgba(63,122,74,.18) 100%)}
+.progress-bar{width:100%;max-width:440px;height:6px;background:var(--panel-2);border-radius:3px;margin:12px 0 18px;overflow:hidden;border:1px solid rgba(184,137,74,.15)}
+.progress-bar > div{height:100%;background:var(--accent-grad);border-radius:3px;transition:width .4s}
+.empty-note{color:var(--text-dim);font-size:13px;text-align:center;margin-top:24px;line-height:1.5;padding:0 20px;font-style:italic}
+
+.achievement-list,.history-list{width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px}
+.ach-row{background:var(--panel);border-radius:6px;padding:13px 16px;display:flex;gap:14px;align-items:center;box-shadow:var(--panel-glow);border:1px solid rgba(184,137,74,.15)}
 .ach-row.locked{opacity:.45}
-.ach-icon{font-size:28px;width:42px;text-align:center;flex-shrink:0}
+.ach-icon{font-size:26px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--panel-2);border-radius:6px;border:1px solid rgba(184,137,74,.2)}
+.ach-row:not(.locked) .ach-icon{background:var(--accent-grad);color:#f4ecd8;border-color:rgba(184,137,74,.4)}
 .ach-info{flex:1}
-.ach-info .title{font-weight:700;font-size:14px}
-.ach-info .desc{font-size:12px;color:var(--text-dim);margin-top:2px}
+.ach-info .title{font-weight:700;font-size:13px;letter-spacing:.3px}
+.ach-info .desc{font-size:11px;font-weight:500;color:var(--text-dim);margin-top:3px}
 
-/* ============ ИСТОРИЯ ПАРТИЙ ============ */
-.history-list{width:100%;max-width:420px;display:flex;
-  flex-direction:column;gap:8px}
-.hist-row{background:var(--panel);border-radius:12px;padding:12px 14px;
-  box-shadow:0 2px 5px rgba(0,0,0,.12)}
-.hist-row .top{display:flex;justify-content:space-between;
-  font-weight:600;font-size:14px;margin-bottom:4px}
-.hist-row .top .result.win{color:var(--accent)}
-.hist-row .top .result.lose{color:var(--danger)}
-.hist-row .meta{font-size:12px;color:var(--text-dim);
-  display:flex;gap:12px;flex-wrap:wrap}
+.hist-row{background:var(--panel);border-radius:6px;padding:13px 16px;box-shadow:var(--panel-glow);border:1px solid rgba(184,137,74,.15)}
+.hist-row .top{display:flex;justify-content:space-between;font-weight:700;font-size:13px;margin-bottom:5px}
+.hist-row .top .result.win{color:var(--success)}
+.hist-row .top .result.lose{color:var(--accent)}
+.hist-row .top .result.draw{color:var(--text-dim)}
+.hist-row .meta{font-size:11px;font-weight:500;color:var(--text-dim);display:flex;gap:14px;flex-wrap:wrap}
 .hist-row .elo-change{font-weight:700}
-.hist-row .elo-change.plus{color:var(--accent)}
-.hist-row .elo-change.minus{color:var(--danger)}
+.hist-row .elo-change.plus{color:var(--success)}
+.hist-row .elo-change.minus{color:var(--accent)}
 
-/* ============ МОДАЛКИ ============ */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;
-  align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
 .modal-overlay.active{display:flex}
-.modal{background:var(--panel);color:var(--text);border-radius:16px;padding:22px;
-  width:100%;max-width:360px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
-.modal h3{margin:0 0 12px;font-size:17px}
-.modal input,.modal textarea{width:100%;padding:12px;font-size:15px;
-  border:1px solid var(--panel-2);border-radius:10px;background:var(--panel-2);
-  color:var(--text);margin-bottom:12px;font-family:monospace;resize:none}
-.modal-btns{display:flex;gap:10px}
-.modal-btns button{flex:1;padding:12px;border:none;border-radius:10px;
-  font-size:15px;font-weight:600;cursor:pointer;background:var(--accent);color:#fff}
+.modal{background:var(--panel);color:var(--text);border-radius:8px;padding:24px;width:100%;max-width:380px;border:1px solid rgba(184,137,74,.4);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.modal h3{margin:0 0 14px;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;letter-spacing:.5px}
+.modal input,.modal textarea{width:100%;padding:12px;font-family:inherit;font-size:14px;border:1px solid rgba(184,137,74,.3);border-radius:5px;background:var(--panel-2);color:var(--text);margin-bottom:12px;resize:none}
+.modal input:focus,.modal textarea:focus{outline:none;border-color:var(--accent)}
+.modal-btns{display:flex;gap:8px}
+.modal-btns button{flex:1;padding:12px;font-family:inherit;border:none;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.4px;background:var(--accent-grad);color:#f4ecd8;transition:transform .12s var(--ease-bounce)}
+.modal-btns button:active{transform:scale(.96)}
 .modal-btns button.secondary{background:var(--panel-2);color:var(--text)}
 
-#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
-  background:var(--panel);color:var(--text);padding:12px 22px;border-radius:25px;
-  font-size:14px;font-weight:600;box-shadow:0 5px 20px rgba(0,0,0,.35);
-  z-index:200;opacity:0;transition:all .3s;pointer-events:none;max-width:90vw;text-align:center}
+#toast{position:fixed;bottom:34px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--panel);color:var(--text);padding:13px 24px;border-radius:6px;font-size:13px;font-weight:600;letter-spacing:.3px;z-index:200;opacity:0;transition:transform .25s var(--ease-bounce), opacity .25s;pointer-events:none;max-width:90vw;text-align:center;border:1px solid rgba(184,137,74,.4);box-shadow:0 8px 24px rgba(0,0,0,.3)}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
-.promo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;
-  align-items:center;justify-content:center;z-index:150}
-.promo-overlay.active{display:flex}
-.promo-box{background:var(--panel);border-radius:16px;padding:16px;
-  display:flex;gap:6px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
-.promo-box button{width:60px;height:60px;font-size:36px;border:none;
-  border-radius:10px;background:var(--panel-2);color:var(--text);cursor:pointer}
-
-/* ============ АНАЛИЗ ============ */
-#board-analysis{
-  display:grid;
-  grid-template-columns:repeat(8,1fr);
-  grid-template-rows:repeat(8,1fr);
-  border:6px solid var(--board-border);
-  border-radius:8px;
-  overflow:hidden;
-  box-shadow:0 8px 20px rgba(0,0,0,.3);
-  background:var(--cell-dark);
-  line-height:0;
-}
-.analysis-nav{
-  display:flex;gap:6px;justify-content:center;margin-top:14px;
-  align-items:center;
-}
-.analysis-nav button{
-  padding:8px 14px;font-size:15px;border:none;border-radius:8px;
-  background:var(--panel);color:var(--text);cursor:pointer;font-weight:600;
-  box-shadow:0 2px 5px rgba(0,0,0,.15);
-}
-.analysis-nav button:disabled{opacity:.35}
-.analysis-nav .counter{font-size:13px;color:var(--text-dim);
-  min-width:70px;text-align:center}
-
-/* ============ КОНЕЦ ПАРТИИ ============ */
-.end-buttons{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;
-  justify-content:center}
-.end-buttons button{padding:10px 16px;border:none;border-radius:10px;
-  font-size:14px;font-weight:600;cursor:pointer;
-  background:var(--panel);color:var(--text);
-  box-shadow:0 2px 5px rgba(0,0,0,.15)}
-.end-buttons button.primary{background:var(--accent);color:#fff}
-
-/* ============ ТОСТ ДОСТИЖЕНИЯ ============ */
 .ach-toast{
-  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-200px);
-  background:linear-gradient(135deg,#ffd700,#ff9800);
-  color:#1a1a1a;padding:14px 22px;border-radius:14px;
-  box-shadow:0 8px 30px rgba(255,152,0,.5);
-  z-index:300;display:flex;gap:12px;align-items:center;
-  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
-  max-width:90vw;
+  position:fixed;top:90px;left:50%;
+  transform:translateX(-50%) translateY(-300px);
+  background:var(--brass-grad);color:#2a1810;
+  padding:14px 24px;border-radius:8px;
+  box-shadow:0 10px 30px rgba(184,137,74,.5);
+  z-index:300;display:flex;gap:14px;align-items:center;
+  transition:transform .35s var(--ease-bounce), opacity .25s;
+  max-width:90vw;opacity:0;border:1px solid rgba(255,255,255,.3);
 }
-.ach-toast.show{transform:translateX(-50%) translateY(0)}
-.ach-toast .icon{font-size:32px}
-.ach-toast .text .ttl{font-weight:800;font-size:14px}
-.ach-toast .text .sb{font-size:12px;opacity:.85}
+.ach-toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.ach-toast .icon{font-size:32px;line-height:1}
+.ach-toast .text .ttl{font-weight:800;font-size:13px;letter-spacing:.3px}
+.ach-toast .text .sb{font-size:11px;font-weight:600;opacity:.85;margin-top:2px}
+
+.promo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:150}
+.promo-overlay.active{display:flex}
+.promo-box{background:var(--panel);border-radius:8px;padding:18px;display:flex;gap:7px;border:1px solid rgba(184,137,74,.4)}
+.promo-box button{width:64px;height:64px;font-size:40px;border:1px solid rgba(184,137,74,.3);border-radius:6px;background:var(--panel-2);color:var(--text);cursor:pointer;transition:transform .12s var(--ease-bounce), background .15s;font-family:"Segoe UI Symbol","Apple Symbols",serif}
+.promo-box button:active{transform:scale(.9);background:var(--accent-grad);color:#f4ecd8}
+
+#board-analysis{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border-radius:4px;overflow:hidden;background:var(--cell-dark);line-height:0;box-shadow:var(--board-shadow),0 0 0 5px var(--board-frame-2),0 0 0 7px var(--board-frame-1)}
+.analysis-nav{display:flex;gap:7px;justify-content:center;margin-top:16px;align-items:center}
+.analysis-nav button{padding:9px 15px;font-family:inherit;font-size:14px;font-weight:700;border:1px solid rgba(184,137,74,.3);border-radius:6px;background:var(--panel);color:var(--text);cursor:pointer;box-shadow:var(--panel-glow);transition:transform .12s var(--ease-bounce)}
+.analysis-nav button:active{transform:scale(.94)}
+.analysis-nav button:disabled{opacity:.35;cursor:not-allowed}
+.analysis-nav .counter{font-size:12px;font-weight:700;color:var(--text-dim);min-width:78px;text-align:center;letter-spacing:.5px}
+
+.end-buttons{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;justify-content:center;flex-shrink:0}
+.end-buttons button{padding:11px 18px;font-family:inherit;border:1px solid rgba(184,137,74,.3);border-radius:6px;font-size:13px;font-weight:700;letter-spacing:.4px;cursor:pointer;background:var(--panel);color:var(--text);box-shadow:var(--panel-glow);transition:transform .12s var(--ease-bounce)}
+.end-buttons button:active{transform:scale(.95)}
+.end-buttons button.primary{background:var(--accent-grad);color:#f4ecd8;border:1px solid rgba(184,137,74,.4)}
+
+body.skin-classic{--cell-light:#e8d3a8;--cell-dark:#6b4226}
+body.skin-wood{--cell-light:#e8c898;--cell-dark:#5a3418}
+body.skin-marble{--cell-light:#e8e0d0;--cell-dark:#5a5a68}
+body.skin-emerald{--cell-light:#c8e0c8;--cell-dark:#2a5a38}
+body.skin-rose{--cell-light:#f0d4d4;--cell-dark:#7a2a3a}
+body.skin-neon{--cell-light:#22223a;--cell-dark:#0a0a15}
+body.skin-neon #board{box-shadow:var(--board-shadow),0 0 0 5px #0d0d1a,0 0 0 7px #00e5ff,0 0 20px rgba(0,229,255,.5)}
+
+@keyframes moveAnim{from{transform:translate(var(--dx,0),var(--dy,0)) scale(.88);opacity:.9}to{transform:translate(0,0) scale(1);opacity:1}}
+.piece.animating,.chess-piece.animating{animation:moveAnim .2s ease-out;z-index:10;position:relative}
+@keyframes captureAnim{from{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.8}to{transform:scale(0);opacity:0}}
+.piece.captured,.chess-piece.captured{animation:captureAnim .25s ease-in forwards;pointer-events:none}
+
+@keyframes victoryFly{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--vx,0),var(--vy,0)) rotate(var(--vr,0deg));opacity:0}}
+.cell.victory-fly .piece,.cell.victory-fly .chess-piece{animation:victoryFly 1.2s var(--ease) forwards;animation-delay:var(--vd, 0s)}
+
+.net-box{background:var(--panel);border-radius:8px;padding:20px;margin-top:12px;box-shadow:var(--panel-glow);width:100%;max-width:380px;border:1px solid rgba(184,137,74,.2)}
+.net-box h4{margin:0 0 8px;font-size:14px;font-weight:700;letter-spacing:.5px;font-family:'Playfair Display',serif}
+.net-box p{margin:0 0 12px;font-size:12px;color:var(--text-dim);line-height:1.5}
+.net-code{background:var(--panel-2);border-radius:6px;padding:14px;font-family:'Courier New',monospace;font-size:11px;word-break:break-all;text-align:center;letter-spacing:.5px;color:var(--accent);border:1px dashed rgba(184,137,74,.4);margin-bottom:10px;max-height:140px;overflow-y:auto}
+.net-actions{display:flex;gap:7px;flex-wrap:wrap}
+.net-actions button{flex:1;min-width:120px;padding:11px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.4px;border:1px solid rgba(184,137,74,.3);border-radius:5px;background:var(--accent-grad);color:#f4ecd8;cursor:pointer;transition:transform .12s var(--ease-bounce)}
+.net-actions button:active{transform:scale(.96)}
+.net-actions button.secondary{background:var(--panel-2);color:var(--text);box-shadow:none}
 </style>
 </head>
-<body class="theme-light skin-classic">
+<body class="theme-light skin-classic piece-skin-classic menu-classic">
 
 <!-- ============ МЕНЮ ============ -->
 <div class="screen active" id="screen-menu">
-  <div class="logo">НАСТОЛЬНЫЕ<br>ИГРЫ</div>
-  <div class="elo-badge">Ваш Эло: <span id="menu-elo">0</span></div>
+  <div class="logo">BOARDLY</div>
+  <div class="logo-sub">три игры · один клик</div>
+  <div class="elo-badge">Эло <span id="menu-elo">0</span></div>
+  <div id="menu-title-badge" class="title-badge" style="margin-bottom:14px">Новичок</div>
+  <div id="menu-stats" style="font-size:11px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;margin-bottom:18px">0 партий · 0 побед</div>
+
+  <div id="daily-task" class="daily-card" style="display:none">
+    <div class="ttl">📅 Задача дня</div>
+    <div class="task" id="daily-text">—</div>
+    <div class="prog" id="daily-progress">—</div>
+  </div>
+
   <div class="menu">
-    <button class="menu-btn primary" onclick="openGameSelect('checkers')">⚫ Шашки</button>
-    <button class="menu-btn primary" onclick="openGameSelect('chess')">♟️ Шахматы</button>
-    <button class="menu-btn" onclick="showScreen('screen-settings')">⚙️ Настройки</button>
-    <button class="menu-btn" onclick="showRating()">🏆 Рейтинг</button>
-    <button class="menu-btn" onclick="showAchievements()">🏅 Достижения</button>
-    <button class="menu-btn" onclick="showHistory()">📜 История партий</button>
+    <button class="resume-btn" id="resume-btn" style="display:none" onclick="resumeGame()">
+      <span class="icon">▶️</span>
+      <span class="label">
+        <span class="main">Продолжить партию</span>
+        <span class="sub" id="resume-info">Шашки · ваш ход</span>
+      </span>
+    </button>
+    <button class="menu-btn primary" onclick="openGameSelect('checkers')">
+      <span class="icon">⚫</span>
+      <span class="label"><span class="main">Шашки</span><span class="sub">Русские · с ботом и на двоих</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn primary" onclick="openGameSelect('chess')">
+      <span class="icon">♟️</span>
+      <span class="label"><span class="main">Шахматы</span><span class="sub">Полные правила</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn primary" onclick="openGameSelect('ttt')">
+      <span class="icon">❌</span>
+      <span class="label"><span class="main">Крестики-нолики</span><span class="sub">3×3 · с ботом или другом</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn" onclick="showProfile()">
+      <span class="icon">👤</span>
+      <span class="label"><span class="main">Профиль</span><span class="sub">Статистика · график Эло</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn" onclick="showChallenges()">
+      <span class="icon">🎯</span>
+      <span class="label"><span class="main">Испытания</span><span class="sub">Особые режимы</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn" onclick="showBestGames()">
+      <span class="icon">⭐</span>
+      <span class="label"><span class="main">Лучшие партии</span><span class="sub">Топ-5 эпичных игр</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn" onclick="showScreen('screen-settings')">
+      <span class="icon">⚙️</span>
+      <span class="label"><span class="main">Настройки</span><span class="sub">Звук, тема, кастомизация</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn" onclick="showRating()">
+      <span class="icon">🏆</span>
+      <span class="label"><span class="main">Рейтинг</span><span class="sub">Обучение и мировой</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn" onclick="showAchievements()">
+      <span class="icon">🏅</span>
+      <span class="label"><span class="main">Достижения</span><span class="sub">20+ наград</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn" onclick="showHistory()">
+      <span class="icon">📜</span>
+      <span class="label"><span class="main">История партий</span><span class="sub">Последние 100 игр</span></span>
+      <span class="chev">›</span>
+    </button>
   </div>
 </div>
 
@@ -372,8 +800,47 @@ body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
     <div style="width:70px"></div>
   </div>
   <div class="menu">
-    <button class="menu-btn primary" onclick="startLocal()">👥 Игра на двоих</button>
-    <button class="menu-btn primary" onclick="showBotSelect()">🤖 Игра с ботом</button>
+    <button class="menu-btn primary" onclick="startLocal()">
+      <span class="icon">👥</span>
+      <span class="label"><span class="main">На двоих</span><span class="sub">На одном устройстве</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn primary" onclick="showBotSelect()">
+      <span class="icon">🤖</span>
+      <span class="label"><span class="main">С ботом</span><span class="sub" id="bot-subtitle">12 соперников · Эло</span></span>
+      <span class="chev">›</span>
+    </button>
+    <button class="menu-btn" onclick="showNetwork()">
+      <span class="icon">🌐</span>
+      <span class="label"><span class="main">По сети</span><span class="sub">Игра по коду с другом</span></span>
+      <span class="chev">›</span>
+    </button>
+  </div>
+</div>
+
+<!-- ============ СЕТЕВАЯ ============ -->
+<div class="screen" id="screen-network">
+  <div class="topbar">
+    <button class="back-btn" onclick="showScreen('screen-select')">← Назад</button>
+    <h2>Игра по сети</h2>
+    <div style="width:70px"></div>
+  </div>
+  <div class="net-box">
+    <h4>🌐 Создать приглашение</h4>
+    <p>Отправь этот код другу.</p>
+    <div class="net-code" id="net-own-code">Нажми «Создать код»</div>
+    <div class="net-actions">
+      <button onclick="netCreate()">📤 Создать код</button>
+      <button class="secondary" onclick="netCopy()">📋 Копировать</button>
+    </div>
+  </div>
+  <div class="net-box">
+    <h4>📥 Присоединиться</h4>
+    <p>Вставь код от друга с его ходом.</p>
+    <textarea id="net-input" rows="4" placeholder="Вставь код друга..." style="width:100%;padding:12px;font-family:'Courier New',monospace;font-size:12px;border:1px solid rgba(184,137,74,.3);border-radius:5px;background:var(--panel-2);color:var(--text);margin-bottom:12px;resize:none"></textarea>
+    <div class="net-actions">
+      <button onclick="netJoin()">▶ Продолжить</button>
+    </div>
   </div>
 </div>
 
@@ -381,7 +848,7 @@ body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
 <div class="screen" id="screen-bots">
   <div class="topbar">
     <button class="back-btn" onclick="showScreen('screen-select')">← Назад</button>
-    <h2 id="bots-title">Выбор соперника</h2>
+    <h2 id="bots-title">Соперник</h2>
     <div style="width:70px"></div>
   </div>
   <div class="rating-list" id="bot-list"></div>
@@ -396,14 +863,24 @@ body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
   </div>
   <div id="status">Ход белых</div>
   <div id="board"></div>
+  <div id="ttt-board" style="display:none"></div>
+  <div class="eval-bar" id="eval-bar" style="display:none">
+    <div class="label" id="eval-label">Оценка позиции</div>
+    <div class="center-line"></div>
+    <div class="fill" id="eval-fill" style="left:50%;width:0;color:#fff"></div>
+  </div>
+  <div id="timer-bar"><div id="timer-fill" style="width:100%"></div></div>
   <div class="game-actions">
-    <button class="undo" id="undo-btn" onclick="undoMove()">↩️ Отменить</button>
-    <button onclick="resetGame()">🔄 Заново</button>
-    <button class="primary" onclick="confirmExit()">🏠 Выйти</button>
+    <button class="undo" id="undo-btn" onclick="undoMove()">↩ Отменить</button>
+    <button id="hint-btn" onclick="showHint()">💡</button>
+    <button class="trainer" id="trainer-btn" onclick="toggleTrainer()">🎓</button>
+    <button onclick="resetGame()">🔄</button>
+    <button class="danger" onclick="resignGame()">🏳️</button>
   </div>
   <div class="end-buttons" id="end-buttons" style="display:none">
     <button class="primary" onclick="rematch()">🔁 Ещё раз</button>
     <button onclick="startAnalysis()">📊 Анализ</button>
+    <button onclick="shareLastResult()">📤 Поделиться</button>
     <button onclick="confirmExit()">🏠 В меню</button>
   </div>
 </div>
@@ -417,31 +894,62 @@ body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
   </div>
   <div class="settings-list">
     <div class="setting-row">
-      <div><div class="label">🔊 Звук</div>
-        <div class="sub">Ходы, взятия, победы</div></div>
+      <div><div class="label">🔊 Звук</div><div class="sub">Ходы, взятия, победы</div></div>
       <div class="toggle" id="toggle-sound" onclick="toggleSound()"></div>
     </div>
     <div class="setting-row">
-      <div><div class="label">🎨 Тема</div>
-        <div class="sub">Оформление</div></div>
-      <div class="theme-switch">
-        <button id="theme-light-btn" onclick="setTheme('light')">☀️</button>
-        <button id="theme-dark-btn" onclick="setTheme('dark')">🌙</button>
+      <div><div class="label">🌙 Тихий режим</div><div class="sub">Меньше звуков вечером</div></div>
+      <div class="toggle" id="toggle-quiet" onclick="toggleQuiet()"></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="label">🌚 Ночной режим</div><div class="sub">Авто-тёмная после 22:00</div></div>
+      <div class="toggle" id="toggle-night" onclick="toggleNight()"></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="label">⏱ Таймер хода</div><div class="sub">30 секунд на ход</div></div>
+      <div class="toggle" id="toggle-timer" onclick="toggleTimer()"></div>
+    </div>
+    <div class="setting-row column">
+      <div><div class="label">🎨 Тема</div><div class="sub">Светлая или тёмная</div></div>
+      <div class="theme-switch" style="margin-top:10px">
+        <button id="theme-light-btn" onclick="setTheme('light')">☀️ Светлая</button>
+        <button id="theme-dark-btn" onclick="setTheme('dark')">🌙 Тёмная</button>
       </div>
     </div>
     <div class="setting-row column">
-      <div><div class="label">🎨 Скин доски</div>
-        <div class="sub">Оформление игрового поля</div></div>
-      <div class="theme-switch" style="margin-top:8px">
+      <div><div class="label">🖼 Скин меню</div><div class="sub">Стиль главного экрана</div></div>
+      <div class="theme-switch" style="margin-top:10px">
+        <button id="menu-classic-btn" onclick="setMenuSkin('classic')">Клуб</button>
+        <button id="menu-marble-btn" onclick="setMenuSkin('marble')">Мрамор</button>
+        <button id="menu-night-btn" onclick="setMenuSkin('night')">Ночь</button>
+        <button id="menu-sakura-btn" onclick="setMenuSkin('sakura')">Сакура</button>
+        <button id="menu-forest-btn" onclick="setMenuSkin('forest')">Лес</button>
+        <button id="menu-retro-btn" onclick="setMenuSkin('retro')">Ретро</button>
+      </div>
+    </div>
+    <div class="setting-row column">
+      <div><div class="label">🎨 Скин доски</div><div class="sub">6 вариантов</div></div>
+      <div class="theme-switch" style="margin-top:10px">
         <button id="skin-classic-btn" onclick="setSkin('classic')">Классика</button>
-        <button id="skin-wood-btn" onclick="setSkin('wood')">Дерево</button>
+        <button id="skin-wood-btn" onclick="setSkin('wood')">Орех</button>
         <button id="skin-marble-btn" onclick="setSkin('marble')">Мрамор</button>
+        <button id="skin-emerald-btn" onclick="setSkin('emerald')">Изумруд</button>
+        <button id="skin-rose-btn" onclick="setSkin('rose')">Бургунди</button>
         <button id="skin-neon-btn" onclick="setSkin('neon')">Неон</button>
       </div>
     </div>
     <div class="setting-row column">
-      <div><div class="label">💾 Прогресс (Эло, статистика)</div>
-        <div class="sub">Код для переноса на другое устройство</div></div>
+      <div><div class="label">⚫ Скин фишек</div><div class="sub">Внешний вид шашек</div></div>
+      <div class="theme-switch" style="margin-top:10px">
+        <button id="piece-classic-btn" onclick="setPieceSkin('classic')">Классика</button>
+        <button id="piece-glass-btn" onclick="setPieceSkin('glass')">Стекло</button>
+        <button id="piece-metal-btn" onclick="setPieceSkin('metal')">Металл</button>
+        <button id="piece-neon-btn" onclick="setPieceSkin('neon')">Неон</button>
+        <button id="piece-wood-piece-btn" onclick="setPieceSkin('wood-piece')">Дерево</button>
+      </div>
+    </div>
+    <div class="setting-row column">
+      <div><div class="label">💾 Прогресс</div><div class="sub">Код для переноса</div></div>
       <div class="code-box" id="progress-code">—</div>
       <div class="code-actions">
         <button onclick="exportProgress()">📋 Копировать</button>
@@ -450,6 +958,50 @@ body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
       </div>
     </div>
   </div>
+</div>
+
+<!-- ============ ПРОФИЛЬ ============ -->
+<div class="screen" id="screen-profile">
+  <div class="topbar">
+    <button class="back-btn" onclick="showScreen('screen-menu')">← Меню</button>
+    <h2>Профиль</h2>
+    <div style="width:70px"></div>
+  </div>
+  <div class="profile-header">
+    <div class="name" id="profile-name">Игрок</div>
+    <div class="title-big" id="profile-title">Новичок</div>
+    <div class="elo-big" id="profile-elo">0</div>
+    <div class="elo-label">Эло рейтинг</div>
+  </div>
+  <div class="stat-grid" id="profile-stats"></div>
+  <div id="elo-graph">
+    <div class="title">📈 Динамика Эло (последние партии)</div>
+    <canvas id="elo-canvas"></canvas>
+  </div>
+  <div class="calendar-wrap">
+    <div class="title">📅 Календарь активности (последние 105 дней)</div>
+    <div class="calendar-grid" id="calendar-grid"></div>
+  </div>
+</div>
+
+<!-- ============ ИСПЫТАНИЯ ============ -->
+<div class="screen" id="screen-challenges">
+  <div class="topbar">
+    <button class="back-btn" onclick="showScreen('screen-menu')">← Меню</button>
+    <h2>Испытания</h2>
+    <div style="width:70px"></div>
+  </div>
+  <div class="challenge-list" id="challenge-list"></div>
+</div>
+
+<!-- ============ ЛУЧШИЕ ПАРТИИ ============ -->
+<div class="screen" id="screen-best">
+  <div class="topbar">
+    <button class="back-btn" onclick="showScreen('screen-menu')">← Меню</button>
+    <h2>Лучшие партии</h2>
+    <div style="width:70px"></div>
+  </div>
+  <div class="best-list" id="best-list"></div>
 </div>
 
 <!-- ============ РЕЙТИНГ ============ -->
@@ -476,7 +1028,7 @@ body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
   <div class="achievement-list" id="achievement-list"></div>
 </div>
 
-<!-- ============ ИСТОРИЯ ПАРТИЙ ============ -->
+<!-- ============ ИСТОРИЯ ============ -->
 <div class="screen" id="screen-history">
   <div class="topbar">
     <button class="back-btn" onclick="showScreen('screen-menu')">← Меню</button>
@@ -493,7 +1045,7 @@ body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
     <h2>Анализ партии</h2>
     <div style="width:70px"></div>
   </div>
-  <div id="analysis-status" style="margin-bottom:8px;font-size:14px;font-weight:600"></div>
+  <div id="analysis-status" style="margin-bottom:10px;font-size:13px;font-weight:600;color:var(--text-dim);letter-spacing:.5px"></div>
   <div id="board-analysis"></div>
   <div class="analysis-nav">
     <button id="an-first" onclick="analysisGo(0)">⏮</button>
@@ -504,7 +1056,7 @@ body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
   </div>
 </div>
 
-<!-- ============ МОДАЛКА ИМПОРТА ============ -->
+<!-- ============ МОДАЛКИ ============ -->
 <div class="modal-overlay" id="import-modal">
   <div class="modal">
     <h3>Импорт прогресса</h3>
@@ -516,12 +1068,10 @@ body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
   </div>
 </div>
 
-<!-- ============ ДИАЛОГ ПРЕВРАЩЕНИЯ ПЕШКИ ============ -->
 <div class="promo-overlay" id="promo-overlay">
   <div class="promo-box" id="promo-box"></div>
 </div>
 
-<!-- ============ ТОСТ ДОСТИЖЕНИЯ ============ -->
 <div class="ach-toast" id="ach-toast">
   <div class="icon" id="ach-toast-icon">🏅</div>
   <div class="text">
@@ -530,8 +1080,12 @@ body.skin-neon .dark{box-shadow:inset 0 0 8px rgba(255,0,229,.15)}
   </div>
 </div>
 
+<div class="trainer-toast" id="trainer-toast">
+  <span id="trainer-toast-text">Совет тренера</span>
+</div>
+
 <div id="toast"></div>
 
 <script src="app.js"></script>
 </body>
-      </html>
+  </html>
